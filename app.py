@@ -6,6 +6,11 @@ from wordcloud import WordCloud
 from collections import Counter
 import re
 from datetime import datetime
+import matplotlib as mpl
+
+# Configure matplotlib to use a font that supports emojis
+plt.rcParams['font.sans-serif'] = ['Segoe UI Emoji', 'DejaVu Sans', 'Arial', 'sans-serif']
+plt.rcParams['axes.unicode_minus'] = False  # For minus sign display
 
 # Set page config
 st.set_page_config(
