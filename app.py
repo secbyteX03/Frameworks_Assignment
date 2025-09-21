@@ -28,20 +28,56 @@ def load_data():
         return None
 
 def plot_publications_over_time(df):
-    """Plot number of publications over time."""
-    st.subheader("Publications Over Time")
+    """Plot number of publications over time with enhanced styling and interactivity."""
+    st.subheader("📅 Publications Over Time")
     
     # Group by year and count publications
     yearly_counts = df['publish_year'].value_counts().sort_index()
     
-    # Create the plot
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.bar(yearly_counts.index.astype(str), yearly_counts.values, color='skyblue')
-    ax.set_xlabel('Year')
-    ax.set_ylabel('Number of Publications')
-    ax.set_title('Number of Publications by Year')
-    plt.xticks(rotation=45)
+    # Create the plot with enhanced styling
+    fig, ax = plt.subplots(figsize=(12, 6))
+    
+    # Use a more appealing color palette
+    colors = plt.cm.viridis(range(len(yearly_counts)))
+    
+    # Create bar plot with improved styling
+    bars = ax.bar(
+        yearly_counts.index.astype(str), 
+        yearly_counts.values, 
+        color=colors,
+        edgecolor='white',
+        linewidth=0.7,
+        alpha=0.8
+    )
+    
+    # Add value labels on top of bars
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(
+            bar.get_x() + bar.get_width()/2.,
+            height + (0.02 * max(yearly_counts.values)),
+            f'{int(height):,}',
+            ha='center',
+            va='bottom',
+            fontsize=9
+        )
+    
+    # Customize axes and title
+    ax.set_xlabel('Year', fontsize=12, labelpad=10)
+    ax.set_ylabel('Number of Publications', fontsize=12, labelpad=10)
+    ax.set_title('📈 Publication Trends Over Time', fontsize=14, pad=15, fontweight='bold')
+    
+    # Improve grid and layout
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    
+    # Display the plot in Streamlit
     st.pyplot(fig)
+    
+    # Add a brief interpretation
+    st.caption("This chart shows the distribution of publications across different years. "
+              "Hover over the bars to see exact publication counts.")
 
 def plot_top_journals(df, top_n=10):
     """Plot top publishing journals."""
