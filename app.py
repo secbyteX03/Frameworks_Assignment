@@ -80,19 +80,68 @@ def plot_publications_over_time(df):
               "Hover over the bars to see exact publication counts.")
 
 def plot_top_journals(df, top_n=10):
-    """Plot top publishing journals."""
-    st.subheader(f"Top {top_n} Publishing Journals")
+    """Plot top publishing journals with enhanced styling and interactivity."""
+    st.subheader(f"🏆 Top {top_n} Publishing Journals")
+    
+    # Add a slider to adjust the number of journals shown
+    top_n = st.slider(
+        "Number of top journals to show:",
+        min_value=5,
+        max_value=30,
+        value=10,
+        step=1,
+        key="top_n_journals"
+    )
     
     # Get top journals
     top_journals = df['journal'].value_counts().head(top_n)
     
-    # Create the plot
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x=top_journals.values, y=top_journals.index, palette='viridis')
-    ax.set_xlabel('Number of Publications')
-    ax.set_ylabel('Journal')
-    ax.set_title(f'Top {top_n} Journals by Publication Count')
+    # Calculate publication percentages
+    total_papers = len(df)
+    top_journals_pct = (top_journals / total_papers * 100).round(1)
+    
+    # Create a color gradient based on the rank
+    colors = plt.cm.viridis_r(range(top_n))
+    
+    # Create the plot with enhanced styling
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    # Create horizontal bar plot
+    bars = ax.barh(
+        top_journals.index.astype(str), 
+        top_journals.values,
+        color=colors,
+        edgecolor='white',
+        linewidth=0.7
+    )
+    
+    # Add value labels on the bars
+    for i, (value, pct) in enumerate(zip(top_journals.values, top_journals_pct)):
+        ax.text(
+            value + (0.01 * max(top_journals.values)),  # x position
+            i,  # y position
+            f"{value:,} ({pct}%)",
+            va='center',
+            ha='left',
+            fontsize=10
+        )
+    
+    # Customize the plot
+    ax.set_xlabel('Number of Publications', fontsize=12, labelpad=10)
+    ax.set_ylabel('Journal', fontsize=12, labelpad=10)
+    ax.set_title(f'Top {top_n} Journals by Publication Count', 
+                fontsize=14, pad=15, fontweight='bold')
+    
+    # Improve layout and grid
+    plt.grid(axis='x', linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    
+    # Add a divider and some context
     st.pyplot(fig)
+    st.caption(f"""
+    This chart shows the top {top_n} journals by publication count in the dataset.
+    The percentage represents the proportion of papers from each journal relative to the total number of papers.
+    """)
 
 def generate_wordcloud(df):
     """Generate an enhanced word cloud from paper titles with better styling and interactivity."""
