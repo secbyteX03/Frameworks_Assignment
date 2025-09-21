@@ -95,20 +95,57 @@ def plot_top_journals(df, top_n=10):
     st.pyplot(fig)
 
 def generate_wordcloud(df):
-    """Generate a word cloud from paper titles."""
-    st.subheader("Common Words in Paper Titles")
+    """Generate an enhanced word cloud from paper titles with better styling and interactivity."""
+    st.subheader("🔠 Word Cloud of Paper Titles")
     
-    # Combine all titles
+    # Add a slider for the number of words
+    max_words = st.slider(
+        "Select maximum number of words:",
+        min_value=50,
+        max_value=500,
+        value=200,
+        step=50,
+        help="Adjust the number of words shown in the word cloud"
+    )
+    
+    # Add a color scheme selector
+    color_scheme = st.selectbox(
+        "Select color scheme:",
+        ["viridis", "plasma", "inferno", "magma", "cividis"],
+        index=0,
+        help="Choose a color scheme for the word cloud"
+    )
+    
+    # Combine all titles and preprocess
     text = ' '.join(title for title in df['title'].astype(str))
     
-    # Generate word cloud
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+    # Generate word cloud with enhanced settings
+    wordcloud = WordCloud(
+        width=1000,
+        height=600,
+        background_color='white',
+        max_words=max_words,
+        colormap=color_scheme,
+        contour_width=1,
+        contour_color='steelblue',
+        collocations=False,  # Don't include common word pairs
+        min_font_size=8,
+        max_font_size=150,
+        random_state=42
+    ).generate(text)
     
-    # Display the word cloud
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.imshow(wordcloud, interpolation='bilinear')
+    # Display the word cloud with improved styling
+    fig, ax = plt.subplots(figsize=(14, 8))
+    ax.imshow(wordcloud, interpolation='bilinear', aspect='auto')
     ax.axis('off')
+    plt.tight_layout(pad=0)
+    
+    # Add a title and description
     st.pyplot(fig)
+    st.caption("""
+    This word cloud visualizes the most common terms in paper titles. 
+    Larger words appear more frequently. Use the controls above to adjust the visualization.
+    """)
 
 def main():
     st.title("📚 CORD-19 Research Explorer")
