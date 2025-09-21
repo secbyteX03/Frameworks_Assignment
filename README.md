@@ -1,16 +1,30 @@
 # CORD-19 Research Explorer
 
-This project provides an interactive dashboard for exploring the CORD-19 dataset, which contains metadata about COVID-19 research papers. The application allows users to filter and visualize publication trends, top journals, and common words in paper titles.
+This project provides an interactive dashboard for exploring the CORD-19 dataset, which contains metadata about COVID-19 research papers. The application allows users to filter and visualize publication trends, top journals, and common words in paper titles with optimized performance for large datasets.
 
-## Features
+## 🌟 Features
 
-- Interactive visualizations of publication trends over time
-- Top publishing journals analysis
-- Word cloud of common terms in paper titles
-- Filter data by year range and journal
-- Download filtered data as CSV
+- **Publication Trends**: Interactive visualization of research output over time
+- **Top Journals Analysis**: Identify leading publishers with publication counts and percentages
+- **Enhanced Word Cloud**: 
+  - Memory-efficient processing of large datasets
+  - Customizable color schemes
+  - Adjustable word count
+  - Optimized text processing with stopword removal
+- **Responsive Design**: Works on various screen sizes
+- **Interactive Filters**:
+  - Filter by year range
+  - Filter by journal
+  - Adjust visualization parameters in real-time
+- **Data Export**: Download filtered data as CSV
 
-## Installation
+## 🚀 Installation
+
+### Prerequisites
+- Python 3.8 or higher
+- pip (Python package manager)
+
+### Setup Instructions
 
 1. Clone this repository:
    ```bash
@@ -18,34 +32,71 @@ This project provides an interactive dashboard for exploring the CORD-19 dataset
    cd Frameworks_Assignment
    ```
 
-2. Install the required packages:
+2. Create and activate a virtual environment (recommended):
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate  # On Windows
+   source venv/bin/activate  # On macOS/Linux
+   ```
+
+3. Install the required packages:
    ```bash
    pip install -r requirements.txt
    ```
+   
+   The main dependencies include:
+   - Streamlit
+   - Pandas
+   - Matplotlib
+   - WordCloud
+   - Seaborn
+   - mplcursors (for interactive plots)
 
-3. Place your `metadata.csv` file in the project directory.
+4. Place your `metadata.csv` file in the project directory or update the file path in the code if needed.
 
-## Usage
+## 🖥️ Usage
 
-1. First, run the data cleaning script:
+1. **Data Preparation** (First time only):
    ```bash
    python cord19_analysis.py
    ```
-   This will create a `cleaned_metadata.csv` file.
+   This will create a `cleaned_metadata.csv` file with processed data.
 
-2. Run the Streamlit app:
+2. **Run the Application**:
    ```bash
    streamlit run app.py
    ```
+   The application will start and automatically open in your default web browser at `http://localhost:8501`.
 
-3. Open your web browser to the URL shown in the terminal (usually http://localhost:8501).
+3. **Using the Dashboard**:
+   - Use the sidebar filters to adjust the data view
+   - Hover over charts for detailed information
+   - Adjust word cloud settings using the interactive controls
+   - Download filtered data using the export button
 
-## Project Structure
+## 🛠️ Performance Optimizations
 
-- `cord19_analysis.py`: Script for loading, exploring, and cleaning the CORD-19 metadata
-- `app.py`: Streamlit application for interactive data exploration
-- `requirements.txt`: Python dependencies
-- `README.md`: This file
+The application includes several optimizations for handling large datasets:
+- Chunked data processing for memory efficiency
+- Caching of expensive computations
+- Optimized word cloud generation
+- Progress indicators for long-running operations
+
+## 📂 Project Structure
+
+```
+Frameworks_Assignment/
+├── app.py                 # Main Streamlit application
+├── cord19_analysis.py     # Data loading and preprocessing
+├── requirements.txt       # Project dependencies
+├── README.md              # This file
+└── cleaned_metadata.csv   # Processed dataset (generated)
+```
+
+### Key Files:
+- `app.py`: Contains the interactive dashboard with visualizations
+- `cord19_analysis.py`: Handles data loading, cleaning, and preprocessing
+- `requirements.txt`: Lists all Python package dependencies
 
 ## Data Source
 
