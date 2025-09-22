@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
@@ -101,19 +102,32 @@ def plot_publications_over_time(df):
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     
-    # Add interactive hover functionality
-    import mplcursors
-    cursor = mplcursors.cursor(bars, hover=True)
+    # Add interactive hover functionality with better error handling
+    try:
+        import mplcursors
+        
+        # Create a custom hover function
+        def on_hover(sel):
+            try:
+                idx = sel.target.index
+                if isinstance(idx, (int, np.integer)) and 0 <= idx < len(yearly_counts):
+                    year = yearly_counts.index[idx]
+                    count = yearly_counts.iloc[idx]
+                    sel.annotation.set_text(f"Year: {year}\nPublications: {int(count):,}")
+                    sel.annotation.get_bbox_patch().set(fc="white", alpha=0.9, boxstyle="round,pad=0.5")
+            except Exception as e:
+                print(f"Error in hover: {e}")
+        
+        # Configure the cursor
+        cursor = mplcursors.cursor(bars, hover=True)
+        cursor.connect("add", on_hover)
+        
+    except ImportError:
+        st.warning("mplcursors not installed. Hover functionality will be limited.")
+        st.warning("Install it with: pip install mplcursors")
     
-    @cursor.connect("add")
-    def on_hover(sel):
-        year = yearly_counts.index[sel.target.index]
-        count = yearly_counts.iloc[sel.target.index]
-        sel.annotation.set_text(f"Year: {year}\nPublications: {int(count):,}")
-        sel.annotation.get_bbox_patch().set(fc="white", alpha=0.9)
-    
-    # Display the plot in Streamlit
-    st.pyplot(fig)
+    # Display the plot in Streamlit with tight layout
+    st.pyplot(fig, clear_figure=True)
     
     # Add a brief interpretation
     st.caption("""
