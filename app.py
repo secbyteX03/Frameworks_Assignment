@@ -434,28 +434,43 @@ def main():
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 
                 if file_format == "CSV":
-                    csv = download_data.to_csv(index=False).encode('utf-8')
-                    st.download_button(
-                        label="💾 Download as CSV",
-                        data=csv,
-                        file_name=f"cord19_filtered_{timestamp}.csv",
-                        mime='text/csv',
-                        help="Download the filtered dataset as a CSV file"
-                    )
+                    try:
+                        csv = download_data.to_csv(index=False).encode('utf-8')
+                        st.download_button(
+                            label="💾 Download as CSV",
+                            data=csv,
+                            file_name=f"cord19_filtered_{timestamp}.csv",
+                            mime='text/csv',
+                            help="Download the filtered dataset as a CSV file"
+                        )
+                    except Exception as e:
+                        st.error(f"Error generating CSV: {str(e)}")
+                        st.warning("Please try again or select a different format.")
                 else:  # Excel
-                    import io
-                    buffer = io.BytesIO()
-                    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                        download_data.to_excel(writer, index=False, sheet_name='CORD19_Data')
+                    try:
+                        # Check if xlsxwriter is installed
+                        import xlsxwriter
+                        import io
                         
-                    excel_data = buffer.getvalue()
-                    st.download_button(
-                        label="💾 Download as Excel",
-                        data=excel_data,
-                        file_name=f"cord19_filtered_{timestamp}.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        help="Download the filtered dataset as an Excel file"
-                    )
+                        buffer = io.BytesIO()
+                        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                            download_data.to_excel(writer, index=False, sheet_name='CORD19_Data')
+                            
+                        excel_data = buffer.getvalue()
+                        st.download_button(
+                            label="💾 Download as Excel",
+                            data=excel_data,
+                            file_name=f"cord19_filtered_{timestamp}.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            help="Download the filtered dataset as an Excel file"
+                        )
+                    except ImportError:
+                        st.error("Excel export requires the 'xlsxwriter' package.")
+                        st.warning("Please install it by running: pip install xlsxwriter")
+                        st.info("Alternatively, you can download the data in CSV format.")
+                    except Exception as e:
+                        st.error(f"Error generating Excel file: {str(e)}")
+                        st.warning("Please try again or select CSV format instead.")
                 
                 # Calculate and show download size estimate
                 try:
